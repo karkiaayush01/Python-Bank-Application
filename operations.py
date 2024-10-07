@@ -18,7 +18,7 @@ def display_string(st):
 
 
 def check_accounts():
-    from account_ops import accounts, createAccount, accountActions
+    from account_ops import accounts, createAccount, removeAccount, accountActions
     if accounts:
         account_nums = len(accounts)
         if account_nums == 1:
@@ -27,8 +27,9 @@ def check_accounts():
             display_text = " Accounts"
         display_string(str(account_nums) + display_text + " Found.")
         display_string("Press 1 to perform operations on an account.")
-        display_string("Press 2 to create a new account")
-        display_string("Press 3 to Quit the application")
+        display_string("Press 2 to create a new account.")
+        display_string("Press 3 to delete an existing account.")
+        display_string("Press 4 to Quit the application.")
         validChoice = False
         while not validChoice:
             choice = input("| Enter your choice: ")
@@ -40,7 +41,11 @@ def check_accounts():
                 print("-" * 80)
                 createAccount()
                 validChoice = True
-            elif (choice == '3'):
+            elif(choice == '3'):
+                print("-" * 80)
+                removeAccount()
+                validChoice = True
+            elif (choice == '4'):
                 return 'y'
             else: 
                 display_string("Invalid choice.")
