@@ -1,6 +1,4 @@
-from fastapi import FastAPI, HTTPException, status, Depends
-from pydantic import BaseModel
-from account_ops import Account, accountCredentials, accounts, updateAccountDatabase
+from fastapi import FastAPI
 from auth import router as auth_router
 from operations import router as operations_router
 

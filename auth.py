@@ -43,7 +43,6 @@ async def user_login(user: accountCredentials, admin_auth: None = Depends(admin_
     if username in accounts:
         if user.pincode == accounts[username].pincode:
             current_user = accounts[username]
-            print(current_user)
             return {"Message" : "User logged in successfully."}
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "User credentials don't match")
@@ -51,7 +50,7 @@ async def user_login(user: accountCredentials, admin_auth: None = Depends(admin_
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "Username does not exist.")
 
 
-def user_auth():
+def user_auth():  
     if current_user == None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not logged in")  
     
@@ -60,3 +59,7 @@ async def user_logout(admin_auth: None = Depends(admin_auth), user_auth: None = 
     global current_user
     current_user = None
     return {"Message" : "User logged out successfully."}
+
+def clear_user_session():
+    global current_user
+    current_user = None
