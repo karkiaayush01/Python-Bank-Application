@@ -12,7 +12,11 @@ function App() {
 
   const updateLoginStatus = (newState) => {
     setIsLoggedIn(newState);
-    localStorage.setItem('loggedInStatus', newState);
+    if(newState === true){
+      localStorage.setItem('loggedInStatus', newState);
+    }else{
+      localStorage.removeItem('loggedInStatus');
+    }
   }
 
   const updateIsCreatingStatus = (newState) => {
@@ -20,10 +24,28 @@ function App() {
   }
 
   useEffect(() => {
-    if(localStorage.getItem('loggedInStatus') == 'true'){
-      setIsLoggedIn(true);
-    }
-  })
+    const fecthLoginStatus = async () => {
+      const loginStatusResponse = fetch('http://localhost/8000/get-logged-in-status', {
+        method: 'GET',
+        headers:{
+          'Content-Type': 'application/json'
+        }
+      })
+
+      const loginStatusResponseJson = await loginStatusResponse.json();
+      if (loginStatusResponseJson.message === 'true'){
+        if(localStorage.getItem('loggedInStatus') === 'true'){
+          updateLoginStatus(true);
+        }
+        else{
+          updateLoginStatus(false);
+        }
+      }
+      else{
+        updateLoginStatus(false);
+      }
+    };
+  }, [])
   
 
   return (
