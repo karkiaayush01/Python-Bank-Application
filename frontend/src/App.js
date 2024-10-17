@@ -25,7 +25,7 @@ function App() {
 
   useEffect(() => {
     const fecthLoginStatus = async () => {
-      const loginStatusResponse = fetch('http://localhost/8000/get-logged-in-status', {
+      const loginStatusResponse = await fetch('http://localhost/8000/get-logged-in-status', {
         method: 'GET',
         headers:{
           'Content-Type': 'application/json'
