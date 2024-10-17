@@ -45,6 +45,10 @@ function App() {
         updateLoginStatus(false);
       }
     };
+
+    if(localStorage.getItem('loggedInStatus') === 'true'){
+      fecthLoginStatus();
+    }
   }, [])
   
 
