@@ -12,4 +12,10 @@ class accountCredentials(BaseModel): #this basemodel is required by operations t
     username: str
     pincode: str
 
+class Transaction(BaseModel):
+    username: str
+    amount: float
+    type: str
+    dateTime: str
+
 accounts = getAccounts() #initial account dictionary.

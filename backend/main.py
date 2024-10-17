@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from auth import router as auth_router
 from operations import router as operations_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware( 
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"]
+)
 
 @app.get("/")
 async def main():
