@@ -11,6 +11,12 @@ function Deposit(){
         e.preventDefault();
 
         try{
+            if(e.target.elements.depositField.value === ''){
+                throw new Error('Empty fields found.')
+            }
+            else if(Number(e.target.elements.depositField.value) == 0){
+                throw new Error("Amount cannot be 0.")
+            }
             const depositResponse = await fetch('http://localhost:8000/deposit', {
                 method: 'POST',
                 headers:{
@@ -69,8 +75,9 @@ function Deposit(){
                     name="depositField"
                 />
                 <p className={clsx(
-                    'opacity-0 text-green-700 mt-2 h-[25px]',
-                    {'opacity-100' : message === 'Balance deposited successfully.'}
+                    'opacity-0 text-red-500 mt-2 h-[25px]',
+                    {'opacity-100 !text-green-700' : message === 'Balance deposited successfully.'},
+                    {'opacity-100' : message !== ''}
                 )}>
                     {message}
                 </p>

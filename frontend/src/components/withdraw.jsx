@@ -9,6 +9,12 @@ function Withdraw(){
         e.preventDefault();
 
         try{
+            if(e.target.elements.withdrawField.value === ''){
+                throw new Error("Empty fields found.")
+            }
+            else if(Number(e.target.elements.withdrawField.value) == 0){
+                throw new Error("Amount cannot be 0.")
+            }
             const withdrawResponse = await fetch('http://localhost:8000/withdraw', {
                 method: 'POST',
                 headers:{
@@ -30,6 +36,8 @@ function Withdraw(){
         catch(error){
             setMessage(error.message);
         }
+
+        e.target.elements.withdrawField.value = '';
     }
 
     function handleChange(e){
