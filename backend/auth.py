@@ -2,10 +2,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from account_ops import accountCredentials, accounts
+from .account_ops import accountCredentials, accounts
 
 router = APIRouter()
-
 
 current_user = None #changes after user login
     

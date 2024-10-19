@@ -10,7 +10,7 @@ accounts_coll = db.accounts #getting accounts collection from account_db
 transactions_coll = db.transactions #getting transactions collection from account_db
 
 def getAccounts():
-    from account_ops import Account
+    from .account_ops import Account
     accounts = {} #empty dictionary
 
     for account in accounts_coll.find():
@@ -20,14 +20,14 @@ def getAccounts():
     return accounts
 
 def getRecentTransactions(username):
-    from account_ops import Transaction
+    from .account_ops import Transaction
     transactions = [] #empty list
-    count = 1
+    count = 0
 
     for transaction in transactions_coll.find({'username': username}).sort('date_time', -1):
         transactions.append(Transaction(username = transaction['username'], amount=transaction['amount'], type = transaction['type'], dateTime=transaction['date_time']))
         count+=1
-        if count == 6:
+        if count == 5:
             return transactions
         
     return transactions

@@ -1,7 +1,7 @@
 #this module contains functions regarding account operations such as creating account, validating user input, and performing actions on accounts
 
 from pydantic import BaseModel
-from database import getAccounts
+from .database import getAccounts
 
 class Account(BaseModel): #creating a basemodel object for auto validation
     username: str
