@@ -15,10 +15,12 @@ function Withdraw(){
             else if(Number(e.target.elements.withdrawField.value) == 0){
                 throw new Error("Amount cannot be 0.")
             }
+            const token = localStorage.getItem('access_token')
             const withdrawResponse = await fetch('http://localhost:8000/withdraw', {
                 method: 'POST',
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     amount

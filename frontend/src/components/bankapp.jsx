@@ -3,48 +3,62 @@ import Deposit from "./deposit";
 import Withdraw from "./withdraw";
 import Overview from "./overview";
 import { useState, useEffect } from "react";
+import LoadingPage from "./loading";
 
 function BankApp({updateLoginStatus}){
-    const[currentUser, setCurrentUser] = useState(null);
-    const[activePage, setActivePage] = useState('overview')
+    const[activePage, setActivePage] = useState('overview');
+    const[userData, setUserData] = useState(null);
+    const[username, setUserName] = useState('');
 
     const updateActivePage = (newState) => {
         setActivePage(newState)
     }
-    
+
     useEffect(() => {
+        const token = localStorage.getItem('access_token');
         const fetchUserData = async () => {
             try{
-                const userResponse = await fetch('http://localhost:8000/get-user-data', {
+                const response = await fetch('http://localhost:8000/get-user-data', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
-                })
+                });
 
-                const responseData = await userResponse.json();
-                setCurrentUser(responseData);
+                if(response.ok){
+                    const responseJson = await response.json();
+                    setUserData(responseJson);
+                    setUserName(responseJson.username);
+                }
+                else{
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || "An error occured");
+                }
             }
-            catch(error){
-                console.log("Failed to fetch user data.");
+            catch(err){
+                console.error(err.message);
             }
-        };
+        }
 
         fetchUserData();
     }, []);
 
-    if(!currentUser){
-        return(
-            <div>Loading...</div>
-        )
-    }
 
     return(
         <div className="w-full h-screen flex">
-            <SideNav updateActivePage = {updateActivePage} username = {currentUser.username} updateLoginStatus={updateLoginStatus}/>
-            {activePage === 'overview' ? <Overview /> :
-                activePage === 'deposit' ?  <Deposit /> :
+            <SideNav updateActivePage = {updateActivePage} username = {username} updateLoginStatus={updateLoginStatus}/>
+            {activePage === 'overview' ? (
+                userData ? (
+                    <Overview userData = {userData} /> 
+                ) : (
+                    <LoadingPage />
+                )
+            ): activePage === 'deposit' ? ( 
+                <Deposit /> 
+            ) : (
                 <Withdraw />
+            )
             }
         </div>
     )

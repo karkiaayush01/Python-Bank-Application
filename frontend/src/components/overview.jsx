@@ -1,51 +1,68 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import LoadingPage from "./loading";
 
-function Overview(){
+function Overview({userData}){
+    const[isLoading, setIsLoading] = useState(true);
     const[transactionData, setTransactionData] = useState([])
     const[currentBalance, setCurrentBalance] = useState(0)
-
+    
     useEffect(() => {
-        const fetchCurrentBalance = async() => {
+        const fetchData = async() => {
+            const token = localStorage.getItem('access_token');
             try{
-                const balanceResponse =  await fetch('http://localhost:8000/get-balance', {
+                setIsLoading(true);
+                
+                const balanceResponse = await fetch('http://localhost:8000/get-balance', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
-                })
+                });
 
-                const balanceResponseJson = await balanceResponse.json();
-                setCurrentBalance(balanceResponseJson.Balance);
-            }
-            catch(error){
-                console.log("Error while fetching balance.")
-            }
-        };
+                if(balanceResponse.ok){
+                    const balanceResponseJson = await balanceResponse.json();   
+                    setCurrentBalance(balanceResponseJson.balance);
+                }
+                else{
+                    const errorData = await balanceResponse.json()
+                    throw new Error(errorData.detail || "Error");
+                }
 
-        fetchCurrentBalance();
-    }, []);
 
-    useEffect(() => {
-        const fetchRecentTransactions = async () => {
-            try{
                 const transactionResponse = await fetch('http://localhost:8000/get-recent-transactions', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     }
                 })
 
-                const transactionResponseJson = await transactionResponse.json();
-                setTransactionData(transactionResponseJson.Transactions);
+                if(transactionResponse.ok){
+                    const transactionResponseJson = await transactionResponse.json();   
+                    setTransactionData(transactionResponseJson.Transactions);
+                    setIsLoading(false);
+                }
+                else{
+                    const errorData = await transactionResponse.json()
+                    throw new Error(errorData.detail || "Error");
+                }
+            
             }
             catch(error){
-                console.log('Error while fetching transactions.')
+                console.log(error.message)
             }
-        }; 
+        };
 
-        fetchRecentTransactions();
+        fetchData();
     }, []);
+
+    if(isLoading){
+        return(
+            <LoadingPage />
+        )
+    }
 
     return(
         <div className="w-full p-[30px] font-[Poppins] text-green-700">
@@ -60,7 +77,7 @@ function Overview(){
                 <div className = "w-[50%] bg-gray-100 rounded-lg py-5 px-7 flex flex-col justify-between">
                     <h1 className="text-[1.3rem] font-[600] mt-4">Recent Transactions</h1>
                     <div className="h-[80%] bg-white rounded-lg flex flex-col p-3 gap-1">
-                        {transactionData.length > 0 ? (
+                        {Array.isArray(transactionData) && transactionData.length > 0 ? (
                             transactionData.map((transaction, index) => (
                                 <div key = {index} className={clsx(
                                     "h-[20%] border-b-2 border-green-700 px-4 flex justify-between items-center",

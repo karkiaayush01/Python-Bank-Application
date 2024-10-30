@@ -15,14 +15,19 @@ function SideNav({updateActivePage, username, updateLoginStatus}){
         if (shouldLogout) {
             const fetchLogout = async () => {
                 try{
-                    const logoutResponse = await fetch('http://localhost:8000/user-logout',{
+                    const token = localStorage.getItem('access_token');
+                    const logoutResponse = await fetch('http://localhost:8000/sign-out',{
                         method: 'POST',
-                        'Content-Type': 'application/json'
+                        headers:{
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
                     })
 
                     if (!logoutResponse.ok){
                         throw new Error("An error occured.")
                     }
+                    localStorage.removeItem('access_token');
                 }
                 catch(error){
                     console.log("error.message")
@@ -34,7 +39,6 @@ function SideNav({updateActivePage, username, updateLoginStatus}){
             
         }
     }, [shouldLogout]);
-
 
     return(
         <div className="md:w-[230px] md:block hidden h-screen bg-gray-100 shadow-lg p-4 font-[Poppins] text-green-700 flex-shrink-0">

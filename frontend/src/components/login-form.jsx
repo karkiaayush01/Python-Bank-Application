@@ -4,37 +4,38 @@ import { clsx } from 'clsx';
 
 function LoginForm({updateLoginStatus, updateIsCreatingStatus}){
     const [username, setUsername] = useState('');
-    const [pincode, setPincode] = useState('');
-    const [errorMessage, setMessage] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try{
-            if(isNaN(Number(pincode))){
-                throw new Error('Pincode should be only numbers.')
-            }
-            const response = await fetch('http://localhost:8000/user-login', {
+            const response = await fetch('http://localhost:8000/sign-in', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     username,
-                    pincode
-                }),
-            });
+                    password
+                })
+            })
             
             if (!response.ok){
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Login Failed');
+                const errorData = await response.json()
+                throw new Error(errorData.detail || 'Login Failed')
             }
 
+            const responseData = await response.json();
+            const access_token = responseData.AccessToken;
+            localStorage.setItem('access_token', access_token);
+            
             setMessage('');
             updateLoginStatus(true);
         }
         catch(error){
-            setMessage(error.message);
+            setMessage(error.message)
         }
     }
     return(
@@ -60,15 +61,15 @@ function LoginForm({updateLoginStatus, updateIsCreatingStatus}){
                         />
                     </div>
                     <div className="mt-4">
-                        <label htmlFor="Pincode" className="block mb-2">
-                            Pincode
+                        <label htmlFor="password" className="block mb-2">
+                            Password
                         </label>
                         <input
                             type="password"
                             className="border-[0.1rem] rounded-sm focus:border-green-700 focus:outline-none pl-2 text-sm h-8 w-full"
-                            placeholder = "Enter 4 digit pincode"
+                            placeholder = "Enter password"
                             onChange={(e) => {
-                                setPincode(e.target.value);
+                                setPassword(e.target.value);
                                 setMessage('');
                             }}
                         />
@@ -76,11 +77,11 @@ function LoginForm({updateLoginStatus, updateIsCreatingStatus}){
                     <div className = {clsx(
                         "text-red-500 mt-3 text-[0.9rem] opacity-0 h-[1.5rem]",
                         {
-                            "opacity-100": errorMessage !== ''
+                            "opacity-100": message !== ''
                         },
                         )} 
                     >
-                        <p>{errorMessage}</p>
+                        <p>{message}</p>
                     </div>
                     <div className="mt-4 text-white">
                         <button type="submit" className="w-full h-[2rem] bg-green-700 ">Sign In</button>
