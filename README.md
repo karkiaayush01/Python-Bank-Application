@@ -12,5 +12,6 @@ macOS and Linux:
 python3 -m venv venv
 source venv/bin/activate
 
+
 Installing required dependencies:
 pip install -r requirements.txt
