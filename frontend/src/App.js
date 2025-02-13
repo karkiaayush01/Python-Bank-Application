@@ -5,6 +5,7 @@ import CreateForm from './components/create-form';
 import BankApp from './components/bankapp';
 import { useState, useEffect } from 'react';
 import LoadingPage from './components/loading';
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
